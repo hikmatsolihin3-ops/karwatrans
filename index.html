@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARWA TRANS - Aplikasi Kasir Rental</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-print {
+            background: var(--success);
+        }
+
+        .btn-print:hover {
+            background: #219955;
+        }
+
+        .btn-reset {
+            background: var(--accent);
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+
+        .result-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .result-label {
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .total {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary);
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-section, .print-section * {
+                visibility: visible;
+            }
+            .print-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        .print-section {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">KARWA TRANS</div>
+            <div class="tagline">Rental Mobil Hiace Profesional</div>
+        </header>
+
+        <div class="card">
+            <div class="card-title">Data Penyewa</div>
+            <div class="form-group">
+                <label for="nama">Nama Penyewa</label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap">
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="hp">Nomor HP</label>
+                        <input type="tel" id="hp" placeholder="0812-3456-7890">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="ktp">Nomor KTP</label>
+                        <input type="text" id="ktp" placeholder="16 digit nomor KTP">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Data Penyewaan</div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="tgl-mulai">Tanggal Mulai</label>
+                        <input type="date" id="tgl-mulai">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="tgl-selesai">Tanggal Selesai</label>
+                        <input type="date" id="tgl-selesai">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="jumlah-hari">Jumlah Hari</label>
+                <input type="number" id="jumlah-hari" readonly>
+            </div>
+            <div class="form-group">
+                <label for="tujuan">Tujuan Sewa</label>
+                <input type="text" id="tujuan" placeholder="Tujuan perjalanan">
+            </div>
+            <div class="form-group">
+                <label for="tarif">Tarif per Hari (Rp)</label>
+                <input type="number" id="tarif" value="800000">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Biaya Tambahan</div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="supir">Supir (Rp)</label>
+                        <input type="number" id="supir" value="0">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="bbm">BBM (Rp)</label>
+                        <input type="number" id="bbm" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="tol">Tol (Rp)</label>
+                        <input type="number" id="tol" value="0">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="parkir">Parkir (Rp)</label>
+                        <input type="number" id="parkir" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Diskon</div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="diskon-persen">Diskon (%)</label>
+                        <input type="number" id="diskon-persen" min="0" max="100" value="0">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="diskon-nominal">Diskon (Rp)</label>
+                        <input type="number" id="diskon-nominal" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-print">
+            <button class="btn" id="hitung-btn">Hitung Total</button>
+            <button class="btn btn-reset" id="reset-btn">Reset Form</button>
+        </div>
+
+        <div id="result" class="result-section" style="display: none;">
+            <div class="result-title">Rincian Pembayaran</div>
+            <div id="result-content"></div>
+            <div class="no-print" style="margin-top: 1.5rem;">
+                <button class="btn btn-print" id="print-btn">Cetak Struk</button>
+            </div>
+        </div>
+
+        <!-- Struk untuk dicetak -->
+        <div id="print-section" class="print-section">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <h2 style="color: var(--primary);">KARWA TRANS</h2>
+                <p>Rental Mobil Hiace Profesional</p>
+                <p>================================</p>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">Data Penyewa</h3>
+                <p><strong>Nama:</strong> <span id="print-nama"></span></p>
+                <p><strong>No. HP:</strong> <span id="print-hp"></span></p>
+                <p><strong>No. KTP:</strong> <span id="print-ktp"></span></p>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">Detail Penyewaan</h3>
+                <p><strong>Tanggal:</strong> <span id="print-tanggal"></span></p>
+                <p><strong>Jumlah Hari:</strong> <span id="print-hari"></span></p>
+                <p><strong>Tujuan:</strong> <span id="print-tujuan"></span></p>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">Rincian Biaya</h3>
+                <p><strong>Sewa Mobil:</strong> <span id="print-sewa"></span></p>
+                <p><strong>Supir:</strong> <span id="print-supir"></span></p>
+                <p><strong>BBM:</strong> <span id="print-bbm"></span></p>
+                <p><strong>Tol:</strong> <span id="print-tol"></span></p>
+                <p><strong>Parkir:</strong> <span id="print-parkir"></span></p>
+                <p><strong>Diskon:</strong> <span id="print-diskon"></span></p>
+            </div>
+            
+            <div style="margin-top: 1.5rem; border-top: 2px solid var(--primary); padding-top: 0.5rem;">
+                <h3><strong>TOTAL PEMBAYARAN:</strong> <span id="print-total"></span></h3>
+            </div>
+            
+            <div style="margin-top: 2rem; text-align: center; font-size: 0.9rem;">
+                <p>Terima kasih telah menggunakan layanan KARWA TRANS</p>
+                <p>================================</p>
+                <p>Dicetak pada: <span id="print-tgl-cetak"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hitung jumlah hari otomatis
+            const tglMulai = document.getElementById('tgl-mulai');
+            const tglSelesai = document.getElementById('tgl-selesai');
+            const jumlahHari = document.getElementById('jumlah-hari');
+            
+            tglMulai.addEventListener('change', hitungJumlahHari);
+            tglSelesai.addEventListener('change', hitungJumlahHari);
+            
+            function hitungJumlahHari() {
+                if (tglMulai.value && tglSelesai.value) {
+                    const mulai = new Date(tglMulai.value);
+                    const selesai = new Date(tglSelesai.value);
+                    const diffTime = Math.abs(selesai - mulai);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    jumlahHari.value = diffDays;
+                }
+            }
+            
+            // Tombol hitung total
+            const hitungBtn = document.getElementById('hitung-btn');
+            hitungBtn.addEventListener('click', hitungTotal);
+            
+            function hitungTotal() {
+                // Validasi input
+                if (!document.getElementById('nama').value) {
+                    alert('Silakan isi nama penyewa');
+                    return;
+                }
+                
+                if (jumlahHari.value <= 0) {
+                    alert('Tanggal mulai dan selesai harus valid');
+                    return;
+                }
+                
+                // Ambil nilai dari form
+                const tarif = parseInt(document.getElementById('tarif').value) || 0;
+                const hari = parseInt(jumlahHari.value) || 0;
+                const supir = parseInt(document.getElementById('supir').value) || 0;
+                const bbm = parseInt(document.getElementById('bbm').value) || 0;
+                const tol = parseInt(document.getElementById('tol').value) || 0;
+                const parkir = parseInt(document.getElementById('parkir').value) || 0;
+                const diskonPersen = parseInt(document.getElementById('diskon-persen').value) || 0;
+                const diskonNominal = parseInt(document.getElementById('diskon-nominal').value) || 0;
+                
+                // Hitung total
+                const subTotal = tarif * hari;
+                const totalTambahan = supir + bbm + tol + parkir;
+                const diskon = Math.min(diskonNominal, subTotal + totalTambahan) + (subTotal * diskonPersen / 100);
+                const total = subTotal + totalTambahan - diskon;
+                
+                // Tampilkan hasil
+                const resultContent = document.getElementById('result-content');
+                resultContent.innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">Sewa Mobil (${hari} hari × Rp${formatRupiah(tarif)})</span>
+                        <span class="result-value">Rp${formatRupiah(subTotal)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Biaya Supir</span>
+                        <span class="result-value">Rp${formatRupiah(supir)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Biaya BBM</span>
+                        <span class="result-value">Rp${formatRupiah(bbm)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Biaya Tol</span>
+                        <span class="result-value">Rp${formatRupiah(tol)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Biaya Parkir</span>
+                        <span class="result-value">Rp${formatRupiah(parkir)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Biaya Tambahan</span>
+                        <span class="result-value">Rp${formatRupiah(totalTambahan)}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Diskon (${diskonPersen}% + Rp${formatRupiah(diskonNominal)})</span>
+                        <span class="result-value">- Rp${formatRupiah(diskon)}</span>
+                    </div>
+                    <div class="result-item total">
+                        <span class="result-label">TOTAL PEMBAYARAN</span>
+                        <span class="result-value">Rp${formatRupiah(total)}</span>
+                    </div>
+                `;
+                
+                // Siapkan data untuk cetak
+                document.getElementById('print-nama').textContent = document.getElementById('nama').value;
+                document.getElementById('print-hp').textContent = document.getElementById('hp').value;
+                document.getElementById('print-ktp').textContent = document.getElementById('ktp').value;
+                document.getElementById('print-tanggal').textContent = `${tglMulai.value} s/d ${tglSelesai.value}`;
+                document.getElementById('print-hari').textContent = `${hari} hari`;
+                document.getElementById('print-tujuan').textContent = document.getElementById('tujuan').value;
+                document.getElementById('print-sewa').textContent = `Rp${formatRupiah(subTotal)} (${hari} hari × Rp${formatRupiah(tarif)})`;
+                document.getElementById('print-supir').textContent = `Rp${formatRupiah(supir)}`;
+                document.getElementById('print-bbm').textContent = `Rp${formatRupiah(bbm)}`;
+                document.getElementById('print-tol').textContent = `Rp${formatRupiah(tol)}`;
+                document.getElementById('print-parkir').textContent = `Rp${formatRupiah(parkir)}`;
+                document.getElementById('print-diskon').textContent = `Rp${formatRupiah(diskon)} (${diskonPersen}% + Rp${formatRupiah(diskonNominal)})`;
+                document.getElementById('print-total').textContent = `Rp${formatRupiah(total)}`;
+                
+                const now = new Date();
+                document.getElementById('print-tgl-cetak').textContent = now.toLocaleString();
+                
+                // Tampilkan hasil
+                document.getElementById('result').style.display = 'block';
+            }
+            
+            // Tombol reset
+            const resetBtn = document.getElementById('reset-btn');
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin mengosongkan semua data?')) {
+                    document.querySelectorAll('input').forEach(input => {
+                        if (input.id !== 'tarif') {
+                            input.value = '';
+                        }
+                    });
+                    document.getElementById('tarif').value = '800000';
+                    document.getElementById('result').style.display = 'none';
+                }
+            });
+            
+            // Tombol cetak
+            const printBtn = document.getElementById('print-btn');
+            printBtn.addEventListener('click', function() {
+                document.getElementById('print-section').style.display = 'block';
+                window.print();
+                document.getElementById('print-section').style.display = 'none';
+            });
+            
+            // Format Rupiah
+            function formatRupiah(angka) {
+                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+        });
+    </script>
+</body>
+</html>
